@@ -1,0 +1,45 @@
+<!-- edit-person.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Kişiyi Düzenle</title>
+  <!-- Bootstrap CSS -->
+  <link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+  />
+  <!-- Özel CSS dosyanız -->
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="edit-person-container mt-5">
+      <h1 class="text-center">Kişiyi Düzenle</h1>
+      <form id="edit-person-form">
+        <div class="form-group">
+          <label for="name">İsim:</label>
+          <input type="text" id="name" name="name" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label for="email">E-posta:</label>
+          <input type="email" id="email" name="email" class="form-control" required />
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Kaydet</button>
+        <button type="button" id="cancel-button" class="btn btn-secondary btn-block mt-2">İptal</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+  ></script>
+  <script
+    src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+  ></script>
+
+  <script src="edit-person.js"></script>
+</body>
+</html>

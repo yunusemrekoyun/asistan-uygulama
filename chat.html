@@ -1,0 +1,45 @@
+<!-- chat.html -->
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Asistan Uygulama - AI ile Sohbet</title>
+  <!-- Bootstrap CSS -->
+  <link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+  />
+  <!-- Özel CSS dosyası -->
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <!-- Chat için ek stil dosyası -->
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="chat-container mt-5">
+      <h1 class="text-center">AI ile Sohbet</h1>
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="input-container">
+        <textarea 
+          id="userInput" 
+          placeholder="Mesajınızı buraya girin..."
+          rows="3"
+        ></textarea>
+        <button id="sendButton" class="btn btn-primary">Gönder</button>
+      </div>
+      <a href="home.html" class="btn btn-secondary btn-block mt-3">Anasayfaya Dön</a>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+  ></script>
+  <script
+    src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+  ></script>
+
+  <script src="chat.js"></script>
+</body>
+</html>

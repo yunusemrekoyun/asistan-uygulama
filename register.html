@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Asistan Uygulama - Kayıt Ol</title>
+  <!-- Bootstrap CSS -->
+  <link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+  />
+  <!-- Özel CSS dosyanız -->
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="register-container mt-5">
+      <h1 class="text-center">Kayıt Ol</h1>
+      <form id="register-form">
+        <div class="form-group">
+          <label for="username">Kullanıcı Adı:</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            class="form-control"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="password">Parola:</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Yüz Kaydı:</label>
+          <div class="text-center">
+            <video id="video" width="320" height="240" autoplay muted></video>
+          </div>
+          <label for="video-source">Kamera Seç:</label>
+          <select id="video-source" class="form-control"></select>
+          <button
+            type="button"
+            id="capture-face"
+            class="btn btn-success btn-block mt-3"
+          >
+            Yüz Kaydet
+          </button>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Kayıt Ol</button>
+      </form>
+      <p id="error-message" class="error-message text-danger mt-3"></p>
+      <p class="text-center mt-3">
+        Zaten bir hesabınız var mı?
+        <a href="index.html">Giriş Yap</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- TensorFlow.js ve face-api.js kütüphaneleri -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.7.4/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+  <!-- Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+  ></script>
+  <script
+    src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+  ></script>
+
+  <!-- Kendi script dosyanız -->
+  <script src="register.js"></script>
+</body>
+</html>
