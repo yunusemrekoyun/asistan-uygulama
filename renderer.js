@@ -1,5 +1,6 @@
 // renderer.js
 
+// Kamera ve yüz tanıma fonksiyonları
 async function setupCamera(selectedDeviceId) {
   const video = document.getElementById('video');
   if (window.stream) {
@@ -82,7 +83,7 @@ document.getElementById('face-login-button').addEventListener('click', async () 
     if (detections) {
       const distance = faceapi.euclideanDistance(
         detections.descriptor,
-        new Float32Array(user.faceDescriptor)
+        new Float32Array(JSON.parse(user.faceDescriptor))
       );
       if (distance < 0.6) {
         window.location.href = 'home.html';

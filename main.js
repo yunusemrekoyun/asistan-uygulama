@@ -8,7 +8,6 @@ const Person = require('./models/person');
 const User = require('./models/user');
 const express = require('express');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
-//require('dotenv').config(); // .env dosyasından ortam değişkenlerini yükler
 
 let mainWindow;
 let editPersonWindow;
@@ -29,15 +28,14 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
       contextIsolation: true,
-      webSecurity: true, // Güvenlik açık, varsayılan olarak true
-      allowRunningInsecureContent: false, // Güvenlik için
+      webSecurity: true,
+      allowRunningInsecureContent: false,
     },
   });
 
   mainWindow.loadFile('index.html');
 }
 
-// Düzenleme penceresi oluşturma fonksiyonu
 function createEditPersonWindow() {
   editPersonWindow = new BrowserWindow({
     width: 400,
@@ -46,9 +44,9 @@ function createEditPersonWindow() {
     modal: true,
     show: false,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'), // preload.js yüklendiğinden emin olun
-      nodeIntegration: false, // Güvenlik için false
-      contextIsolation: true, // contextIsolation etkinleştirildi
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: false,
+      contextIsolation: true,
     },
   });
 
@@ -89,7 +87,7 @@ app.whenReady().then(async () => {
       await User.create({
         username: userData.username,
         passwordHash,
-        faceDescriptor: userData.faceDescriptor, // faceDescriptor eklendi
+        faceDescriptor: userData.faceDescriptor,
       });
       return { success: true };
     } catch (error) {
@@ -211,7 +209,7 @@ app.whenReady().then(async () => {
   });
 
   // Gemini AI Entegrasyonu
-  const genAI = new GoogleGenerativeAI('AIzaSyAtfVVMY6-zxrmv3Qf5cNQzDBHaxmngu4Y')
+  const genAI = new GoogleGenerativeAI('AIzaSyAtfVVMY6-zxrmv3Qf5cNQzDBHaxmngu4Y');
 
   ipcMain.handle('chat-with-gemini', async (event, prompt) => {
     try {

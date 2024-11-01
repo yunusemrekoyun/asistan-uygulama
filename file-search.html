@@ -1,0 +1,67 @@
+<!-- file-search.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Asistan Uygulama - Dosya Arama</title>
+  <!-- Bootstrap CSS -->
+  <link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+  />
+  <!-- Özel CSS dosyanız -->
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+</head>
+<body>
+  <div class="container">
+    <div class="file-search-container mt-5">
+      <h1 class="text-center">Dosya Arama</h1>
+      <div class="input-group mb-3">
+        <input type="text" id="searchInput" class="form-control" placeholder="Komut girin...">
+        <button id="goButton" class="btn btn-primary">Git</button>
+      </div>
+      <div id="navigationButtons" class="mb-3">
+        <button id="backButton" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Geri</button>
+        <button id="forwardButton" class="btn btn-secondary"><i class="fas fa-arrow-right"></i> İleri</button>
+        <button id="homeButton" class="btn btn-secondary"><i class="fas fa-home"></i> Ana Dizin</button>
+      </div>
+      <!-- Mevcut gidilen dizini göster -->
+      <div class="mb-3">
+        <strong>Mevcut Dizin:</strong> <span id="currentPath"></span>
+      </div>
+      <!-- Görünüm seçici -->
+      <div id="viewToggle" class="mb-3">
+        <button id="listViewButton" class="btn btn-outline-secondary"><i class="fas fa-list"></i> Liste Görünümü</button>
+        <button id="gridViewButton" class="btn btn-outline-secondary"><i class="fas fa-th"></i> Izgara Görünümü</button>
+      </div>
+      <div class="row">
+        <div class="col-md-9">
+          <h2>Dosyalar:</h2>
+          <div id="fileList" class="list-group"></div>
+        </div>
+        <div class="col-md-3">
+          <h2>Son Gidilen Yerler:</h2>
+          <div id="recentPlaces" class="list-group"></div>
+        </div>
+      </div>
+      <a href="home.html" class="btn btn-secondary btn-block mt-3">Anasayfaya Dön</a>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+  ></script>
+  <script
+    src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+  ></script>
+  <!-- Renderer Script -->
+  <script src="file-search.js"></script>
+</body>
+</html>
