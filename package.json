@@ -15,7 +15,7 @@
     "bcryptjs": "^2.4.3",
     "express": "^4.18.2",
     "face-api.js": "^0.22.2",
-    "natural": "^6.3.0",
+    "natural": "^6.12.0",
     "pg": "^8.11.1",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.32.1"

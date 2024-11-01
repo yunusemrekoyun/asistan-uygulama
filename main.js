@@ -1,6 +1,7 @@
 // main.js
 
 const { app, BrowserWindow, ipcMain } = require('electron');
+const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const sequelize = require('./models');
@@ -8,6 +9,7 @@ const Person = require('./models/person');
 const User = require('./models/user');
 const express = require('express');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const os = require('os'); // os modülünü ekledik
 
 let mainWindow;
 let editPersonWindow;
@@ -30,6 +32,7 @@ function createWindow() {
       contextIsolation: true,
       webSecurity: true,
       allowRunningInsecureContent: false,
+      sandbox: false,
     },
   });
 
@@ -209,7 +212,7 @@ app.whenReady().then(async () => {
   });
 
   // Gemini AI Entegrasyonu
-  const genAI = new GoogleGenerativeAI('AIzaSyAtfVVMY6-zxrmv3Qf5cNQzDBHaxmngu4Y');
+  const genAI = new GoogleGenerativeAI('AIzaSyAtfVVMY6-zxrmv3Qf5cNQzDBHaxmngu4Y'); // API anahtarınızı buraya ekleyin
 
   ipcMain.handle('chat-with-gemini', async (event, prompt) => {
     try {
@@ -221,6 +224,40 @@ app.whenReady().then(async () => {
       console.error('AI yanıtı alma hatası:', error);
       return 'İsteğiniz işlenirken bir hata oluştu.';
     }
+  });
+
+  // fs.readdir fonksiyonunu expose ediyoruz
+  ipcMain.handle('fs-readdir', async (event, dirPath, options) => {
+    return new Promise((resolve, reject) => {
+      fs.readdir(dirPath, options, (err, files) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(files);
+        }
+      });
+    });
+  });
+
+  // fs.stat fonksiyonunu expose ediyoruz
+  ipcMain.handle('fs-stat', async (event, filePath) => {
+    return new Promise((resolve, reject) => {
+      fs.stat(filePath, (err, stats) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({
+            isDirectory: stats.isDirectory(),
+            isFile: stats.isFile(),
+            // Diğer özellikler eklenebilir
+          });
+        }
+      });
+    });
+  });
+  // path.join fonksiyonunu expose ediyoruz
+  ipcMain.handle('path-join', (event, ...args) => {
+    return path.join(...args);
   });
 
   app.on('activate', function () {

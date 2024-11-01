@@ -1,12 +1,13 @@
 // preload.js
 
 const { contextBridge, ipcRenderer } = require('electron');
+const os = require('os'); // os modülünü ekledik
 
 contextBridge.exposeInMainWorld('electronAPI', {
   // Kullanıcı kayıt ve giriş fonksiyonları
   registerUser: (userData) => ipcRenderer.invoke('register-user', userData),
   login: (loginData) => ipcRenderer.invoke('login', loginData),
-  getUserByUsername: (username) => ipcRenderer.invoke('get-user-by-username', username), // Eklendi
+  getUserByUsername: (username) => ipcRenderer.invoke('get-user-by-username', username),
 
   // Kişi yönetimi fonksiyonları
   addPerson: (personData) => ipcRenderer.invoke('add-person', personData),
@@ -25,6 +26,17 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Gemini AI ile sohbet fonksiyonu
   sendMessageToGemini: (prompt) => ipcRenderer.invoke('chat-with-gemini', prompt),
 
-  // Dosya arama için fonksiyonlar
-  invoke: (channel, ...args) => ipcRenderer.invoke(channel, ...args),
+  // OS modülünü expose ediyoruz
+  os: {
+    homedir: () => os.homedir(),
+  },
+
+  // Dosya sistemi fonksiyonları
+  fs: {
+    readdir: (dirPath, options) => ipcRenderer.invoke('fs-readdir', dirPath, options),
+    stat: (filePath) => ipcRenderer.invoke('fs-stat', filePath),
+  },
+  path: {
+    join: (...args) => ipcRenderer.invoke('path-join', ...args),
+  },
 });

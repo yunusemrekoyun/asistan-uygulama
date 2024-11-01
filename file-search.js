@@ -17,7 +17,8 @@ let historyIndex = -1;
 let recentPaths = [];
 let isGridView = false; // Varsayılan olarak liste görünümü
 
-const tokenizer = new window.electronAPI.natural.WordTokenizer();
+// natural modülünü kullanmak için
+const tokenizer = new window.natural.WordTokenizer();
 
 goButton.addEventListener('click', () => {
   const command = searchInput.value.toLowerCase();
@@ -62,19 +63,21 @@ gridViewButton.addEventListener('click', () => {
   listFiles(currentPath);
 });
 
-fileList.addEventListener('click', (event) => {
+fileList.addEventListener('click', async (event) => {
   const target = event.target.closest('.file-item');
   if (target && target.dataset.path) {
     const selectedPath = target.dataset.path;
-    window.electronAPI.fs.stat(selectedPath, (err, stats) => {
-      if (err) return console.error(err);
-      if (stats.isDirectory()) {
+    try {
+      const stats = await window.electronAPI.fs.stat(selectedPath);
+      if (stats.isDirectory) {
         navigateTo(selectedPath);
       } else {
         // Dosya ise açabilirsiniz
         window.electronAPI.shellOpenPath(selectedPath);
       }
-    });
+    } catch (err) {
+      console.error(err);
+    }
   }
 });
 
@@ -108,33 +111,29 @@ function navigateTo(newPath) {
   updateRecentPlaces(currentPath);
 }
 
-function listFiles(dirPath) {
+async function listFiles(dirPath) {
   // Mevcut dizini güncelle
   currentPathElement.textContent = dirPath;
 
-  window.electronAPI.fs.readdir(dirPath, { withFileTypes: true }, (err, files) => {
-    if (err) {
-      console.error(err);
-      fileList.innerHTML = '<div>Bu dizine erişilemiyor.</div>';
-      return;
-    }
+  try {
+    const files = await window.electronAPI.fs.readdir(dirPath, { withFileTypes: true });
     fileList.innerHTML = '';
 
     // Klasörleri ve dosyaları ayır
-    const folders = files.filter(file => file.isDirectory());
-    const regularFiles = files.filter(file => !file.isDirectory());
+    const folders = files.filter((file) => file.isDirectory);
+    const regularFiles = files.filter((file) => !file.isDirectory);
 
     // Klasörleri ve dosyaları birleştir, klasörler önce
     const sortedFiles = [...folders, ...regularFiles];
 
-    sortedFiles.forEach(file => {
+    sortedFiles.forEach((file) => {
       const fullPath = window.electronAPI.path.join(dirPath, file.name);
       const div = document.createElement('div');
       div.classList.add('file-item');
       div.dataset.path = fullPath;
 
       const icon = document.createElement('i');
-      if (file.isDirectory()) {
+      if (file.isDirectory) {
         icon.classList.add('fas', 'fa-folder', 'folder-icon');
       } else {
         icon.classList.add('fas', 'fa-file', 'file-icon');
@@ -165,7 +164,10 @@ function listFiles(dirPath) {
     } else {
       fileList.classList.remove('grid-view');
     }
-  });
+  } catch (err) {
+    console.error(err);
+    fileList.innerHTML = '<div>Bu dizine erişilemiyor.</div>';
+  }
 }
 
 function updateRecentPlaces(newPath) {
@@ -178,7 +180,7 @@ function updateRecentPlaces(newPath) {
 
 function renderRecentPlaces() {
   recentPlaces.innerHTML = '';
-  recentPaths.forEach(place => {
+  recentPaths.forEach((place) => {
     const div = document.createElement('a');
     div.textContent = place;
     div.dataset.path = place;
@@ -199,32 +201,28 @@ async function searchFiles(keyword) {
 
   async function searchInDirectory(dir, depth) {
     if (depth > maxDepth) return;
-    return new Promise((resolve) => {
-      window.electronAPI.fs.readdir(dir, { withFileTypes: true }, async (err, files) => {
-        if (err) {
-          resolve();
-          return;
+    try {
+      const files = await window.electronAPI.fs.readdir(dir, { withFileTypes: true });
+      for (const file of files) {
+        const fullPath = window.electronAPI.path.join(dir, file.name);
+        if (file.name.toLowerCase().includes(keyword.toLowerCase())) {
+          results.push({ name: file.name, path: fullPath, isDirectory: file.isDirectory });
         }
-        for (const file of files) {
-          const fullPath = window.electronAPI.path.join(dir, file.name);
-          if (file.name.toLowerCase().includes(keyword.toLowerCase())) {
-            results.push({ name: file.name, path: fullPath, isDirectory: file.isDirectory() });
-          }
-          if (file.isDirectory()) {
-            await searchInDirectory(fullPath, depth + 1);
-          }
+        if (file.isDirectory) {
+          await searchInDirectory(fullPath, depth + 1);
         }
-        resolve();
-      });
-    });
+      }
+    } catch (err) {
+      // Hata durumunda devam et
+    }
   }
 
   await searchInDirectory(currentPath, 0);
-  
+
   if (results.length > 0) {
     fileList.innerHTML = '';
 
-    results.forEach(result => {
+    results.forEach((result) => {
       const div = document.createElement('div');
       div.classList.add('file-item');
       div.dataset.path = result.path;

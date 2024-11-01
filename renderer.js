@@ -74,6 +74,20 @@ document.getElementById('face-login-button').addEventListener('click', async () 
       return;
     }
 
+    // faceDescriptor verisini işliyoruz
+    let faceDescriptorData;
+    if (typeof user.faceDescriptor === 'string') {
+      try {
+        faceDescriptorData = JSON.parse(user.faceDescriptor);
+      } catch (error) {
+        console.error('faceDescriptor JSON parse hatası:', error);
+        alert('Yüz verisi işlenirken bir hata oluştu.');
+        return;
+      }
+    } else {
+      faceDescriptorData = user.faceDescriptor;
+    }
+
     const video = document.getElementById('video');
     const detections = await faceapi
       .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
@@ -83,7 +97,7 @@ document.getElementById('face-login-button').addEventListener('click', async () 
     if (detections) {
       const distance = faceapi.euclideanDistance(
         detections.descriptor,
-        new Float32Array(JSON.parse(user.faceDescriptor))
+        new Float32Array(faceDescriptorData)
       );
       if (distance < 0.6) {
         window.location.href = 'home.html';
