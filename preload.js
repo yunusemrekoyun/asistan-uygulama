@@ -1,7 +1,8 @@
 // preload.js
 
 const { contextBridge, ipcRenderer } = require('electron');
-const os = require('os'); // os modülünü ekledik
+const os = require('os');
+const natural = require('natural'); // natural modülünü ekledik
 
 contextBridge.exposeInMainWorld('electronAPI', {
   // Kullanıcı kayıt ve giriş fonksiyonları
@@ -38,5 +39,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
   },
   path: {
     join: (...args) => ipcRenderer.invoke('path-join', ...args),
+  },
+
+  // natural modülünü expose ediyoruz
+  natural: {
+    tokenize: (text) => {
+      const tokenizer = new natural.WordTokenizer();
+      return tokenizer.tokenize(text);
+    },
   },
 });

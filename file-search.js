@@ -17,12 +17,10 @@ let historyIndex = -1;
 let recentPaths = [];
 let isGridView = false; // Varsayılan olarak liste görünümü
 
-// natural modülünü kullanmak için
-const tokenizer = new window.natural.WordTokenizer();
-
 goButton.addEventListener('click', () => {
   const command = searchInput.value.toLowerCase();
-  processCommand(command);
+  const tokens = window.electronAPI.natural.tokenize(command);
+  processCommand(tokens);
   searchInput.value = '';
 });
 
@@ -81,8 +79,7 @@ fileList.addEventListener('click', async (event) => {
   }
 });
 
-function processCommand(command) {
-  const tokens = tokenizer.tokenize(command);
+function processCommand(tokens) {
   if (tokens.includes('indirilenler') || tokens.includes('download') || tokens.includes('downloads')) {
     navigateTo(window.electronAPI.path.join(window.electronAPI.os.homedir(), 'Downloads'));
   } else if (tokens.includes('masaüstü') || tokens.includes('desktop')) {
@@ -96,7 +93,7 @@ function processCommand(command) {
   } else if (tokens.includes('ana') && tokens.includes('dizin')) {
     homeButton.click();
   } else {
-    searchFiles(command);
+    searchFiles(tokens.join(' ')); // Tokens'ı tekrar string'e çeviriyoruz
   }
 }
 
