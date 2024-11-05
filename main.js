@@ -233,7 +233,18 @@ app.whenReady().then(async () => {
         if (err) {
           reject(err);
         } else {
-          resolve(files);
+          if (options.withFileTypes) {
+            // Dirent nesnelerini serialize ediyoruz
+            const serializedFiles = files.map((file) => ({
+              name: file.name,
+              isDirectory: file.isDirectory(),
+              isFile: file.isFile(),
+              // İsterseniz diğer özellikleri de ekleyebilirsiniz
+            }));
+            resolve(serializedFiles);
+          } else {
+            resolve(files);
+          }
         }
       });
     });
@@ -246,10 +257,12 @@ app.whenReady().then(async () => {
         if (err) {
           reject(err);
         } else {
+          // Stats nesnesini serialize ediyoruz
           resolve({
             isDirectory: stats.isDirectory(),
             isFile: stats.isFile(),
-            // Diğer özellikler eklenebilir
+            size: stats.size,
+            // Diğer gerekli özellikleri ekleyebilirsiniz
           });
         }
       });
@@ -259,7 +272,6 @@ app.whenReady().then(async () => {
   ipcMain.handle('path-join', (event, ...args) => {
     return path.join(...args);
   });
-
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });

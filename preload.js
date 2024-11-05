@@ -41,7 +41,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     join: (...args) => ipcRenderer.invoke('path-join', ...args),
   },
 
-  // natural modülünü expose ediyoruz
   natural: {
     tokenize: (text) => {
       const tokenizer = new natural.WordTokenizer();

@@ -155,16 +155,16 @@ async function listFiles(dirPath) {
       fileList.appendChild(div);
     });
 
-    // Görünüm sınıfını ayarla
-    if (isGridView) {
-      fileList.classList.add('grid-view');
-    } else {
-      fileList.classList.remove('grid-view');
-    }
-  } catch (err) {
-    console.error(err);
-    fileList.innerHTML = '<div>Bu dizine erişilemiyor.</div>';
+   // Görünüm sınıfını ayarla
+   if (isGridView) {
+    fileList.classList.add('grid-view');
+  } else {
+    fileList.classList.remove('grid-view');
   }
+} catch (err) {
+  console.error(err);
+  fileList.innerHTML = '<div>Bu dizine erişilemiyor.</div>';
+}
 }
 
 function updateRecentPlaces(newPath) {
@@ -189,12 +189,13 @@ function renderRecentPlaces() {
   });
 }
 
+
 async function searchFiles(keyword) {
   fileList.innerHTML = '<div>Aranıyor...</div>';
   const results = [];
 
   // Arama derinliğini sınırlamak için maxDepth parametresi ekleyelim
-  const maxDepth = 3;
+  const maxDepth = 5; // Derinliği artırdık
 
   async function searchInDirectory(dir, depth) {
     if (depth > maxDepth) return;
@@ -250,15 +251,16 @@ async function searchFiles(keyword) {
       fileList.appendChild(div);
     });
 
-    // Görünüm sınıfını ayarla
-    if (isGridView) {
-      fileList.classList.add('grid-view');
-    } else {
-      fileList.classList.remove('grid-view');
-    }
+
+   // Görünüm sınıfını ayarla
+   if (isGridView) {
+    fileList.classList.add('grid-view');
   } else {
-    fileList.innerHTML = '<div>Sonuç bulunamadı.</div>';
+    fileList.classList.remove('grid-view');
   }
+} else {
+  fileList.innerHTML = '<div>Sonuç bulunamadı.</div>';
+}
 }
 
 // Uygulama ilk açıldığında mevcut dizini listeleyin

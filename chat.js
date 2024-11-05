@@ -29,6 +29,7 @@ function formatContent(content) {
     codeElement.className = 'code-block';
     codeElement.textContent = code;
     elements.push(codeElement);
+  
 
     lastIndex = codeBlockRegex.lastIndex;
   }
