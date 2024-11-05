@@ -41,6 +41,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
     join: (...args) => ipcRenderer.invoke('path-join', ...args),
   },
 
+
+  // shell.openPath fonksiyonunu expose ediyoruz
+  shellOpenPath: (path) => ipcRenderer.invoke('shell-open-path', path),
+
+  // natural modülünü expose ediyoruz
+
   natural: {
     tokenize: (text) => {
       const tokenizer = new natural.WordTokenizer();

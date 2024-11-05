@@ -71,7 +71,7 @@ fileList.addEventListener('click', async (event) => {
         navigateTo(selectedPath);
       } else {
         // Dosya ise açabilirsiniz
-        window.electronAPI.shellOpenPath(selectedPath);
+        await window.electronAPI.shellOpenPath(selectedPath);
       }
     } catch (err) {
       console.error(err);
@@ -155,16 +155,16 @@ async function listFiles(dirPath) {
       fileList.appendChild(div);
     });
 
-   // Görünüm sınıfını ayarla
-   if (isGridView) {
-    fileList.classList.add('grid-view');
-  } else {
-    fileList.classList.remove('grid-view');
+    // Görünüm sınıfını ayarla
+    if (isGridView) {
+      fileList.classList.add('grid-view');
+    } else {
+      fileList.classList.remove('grid-view');
+    }
+  } catch (err) {
+    console.error(err);
+    fileList.innerHTML = '<div>Bu dizine erişilemiyor.</div>';
   }
-} catch (err) {
-  console.error(err);
-  fileList.innerHTML = '<div>Bu dizine erişilemiyor.</div>';
-}
 }
 
 function updateRecentPlaces(newPath) {
@@ -188,7 +188,6 @@ function renderRecentPlaces() {
     recentPlaces.appendChild(div);
   });
 }
-
 
 async function searchFiles(keyword) {
   fileList.innerHTML = '<div>Aranıyor...</div>';
@@ -251,16 +250,15 @@ async function searchFiles(keyword) {
       fileList.appendChild(div);
     });
 
-
-   // Görünüm sınıfını ayarla
-   if (isGridView) {
-    fileList.classList.add('grid-view');
+    // Görünüm sınıfını ayarla
+    if (isGridView) {
+      fileList.classList.add('grid-view');
+    } else {
+      fileList.classList.remove('grid-view');
+    }
   } else {
-    fileList.classList.remove('grid-view');
+    fileList.innerHTML = '<div>Sonuç bulunamadı.</div>';
   }
-} else {
-  fileList.innerHTML = '<div>Sonuç bulunamadı.</div>';
-}
 }
 
 // Uygulama ilk açıldığında mevcut dizini listeleyin

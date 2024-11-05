@@ -239,7 +239,6 @@ app.whenReady().then(async () => {
               name: file.name,
               isDirectory: file.isDirectory(),
               isFile: file.isFile(),
-              // İsterseniz diğer özellikleri de ekleyebilirsiniz
             }));
             resolve(serializedFiles);
           } else {
@@ -268,6 +267,8 @@ app.whenReady().then(async () => {
       });
     });
   });
+
+
   // path.join fonksiyonunu expose ediyoruz
   ipcMain.handle('path-join', (event, ...args) => {
     return path.join(...args);
@@ -275,6 +276,19 @@ app.whenReady().then(async () => {
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
+});
+ // shell.openPath fonksiyonunu expose ediyoruz
+ ipcMain.handle('shell-open-path', async (event, pathToOpen) => {
+  try {
+    await shell.openPath(pathToOpen);
+    return true;
+  } catch (error) {
+    console.error('Dosya açılamadı:', error);
+    return false;
+  }
+});
+app.on('activate', function () {
+  if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
 
 app.on('window-all-closed', function () {
