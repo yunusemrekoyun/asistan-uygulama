@@ -2,7 +2,8 @@
 
 const { contextBridge, ipcRenderer } = require('electron');
 const os = require('os');
-const natural = require('natural'); // natural modülünü ekledik
+const path = require('path');
+const natural = require('natural');
 
 contextBridge.exposeInMainWorld('electronAPI', {
   // Kullanıcı kayıt ve giriş fonksiyonları
@@ -27,9 +28,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Gemini AI ile sohbet fonksiyonu
   sendMessageToGemini: (prompt) => ipcRenderer.invoke('chat-with-gemini', prompt),
 
-  // OS modülünü expose ediyoruz
+  // OS modülünü expose ediyoruz (senkron fonksiyon)
   os: {
     homedir: () => os.homedir(),
+  },
+
+  // Path modülünü expose ediyoruz (senkron fonksiyon)
+  path: {
+    join: (...args) => path.join(...args),
   },
 
   // Dosya sistemi fonksiyonları
@@ -37,16 +43,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
     readdir: (dirPath, options) => ipcRenderer.invoke('fs-readdir', dirPath, options),
     stat: (filePath) => ipcRenderer.invoke('fs-stat', filePath),
   },
-  path: {
-    join: (...args) => ipcRenderer.invoke('path-join', ...args),
-  },
-
 
   // shell.openPath fonksiyonunu expose ediyoruz
-  shellOpenPath: (path) => ipcRenderer.invoke('shell-open-path', path),
+  shellOpenPath: (pathToOpen) => ipcRenderer.invoke('shell-open-path', pathToOpen),
 
   // natural modülünü expose ediyoruz
-
   natural: {
     tokenize: (text) => {
       const tokenizer = new natural.WordTokenizer();

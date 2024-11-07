@@ -270,12 +270,12 @@ app.whenReady().then(async () => {
 
 
   // path.join fonksiyonunu expose ediyoruz
-  ipcMain.handle('path-join', (event, ...args) => {
+ /* ipcMain.handle('path-join', (event, ...args) => {
     return path.join(...args);
   });
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
-  });
+  });*/
 });
  // shell.openPath fonksiyonunu expose ediyoruz
  ipcMain.handle('shell-open-path', async (event, pathToOpen) => {
