@@ -71,7 +71,8 @@ fileList.addEventListener('click', async (event) => {
         navigateTo(selectedPath);
       } else {
         // Dosya ise açabilirsiniz
-        await window.electronAPI.shellOpenPath(selectedPath);
+        const {shell} = require ('electron');
+        shell.openPath(selectedPath);
       }
     } catch (err) {
       console.error(err);
