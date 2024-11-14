@@ -66,6 +66,7 @@ function createEditPersonWindow() {
 
 app.whenReady().then(async () => {
   try {
+    
     await sequelize.authenticate();
     console.log('Veritabanı bağlantısı başarılı.');
 
