@@ -213,7 +213,7 @@ app.whenReady().then(async () => {
   });
 
   // Gemini AI Entegrasyonu
-  const genAI = new GoogleGenerativeAI('AIzaSyAtfVVMY6-zxrmv3Qf5cNQzDBHaxmngu4Y'); // API anahtarınızı buraya ekleyin
+  const genAI = new GoogleGenerativeAI('API KEY'); // API anahtarınızı buraya ekleyin
 
   ipcMain.handle('chat-with-gemini', async (event, prompt) => {
     try {
