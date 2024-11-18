@@ -211,7 +211,7 @@ app.whenReady().then(async () => {
   });
 
   // Gemini AI Entegrasyonu
-  const genAI = new GoogleGenerativeAI('AIzaSyAtfVVMY6-zxrmv3Qf5cNQzDBHaxmngu4Y')
+  const genAI = new GoogleGenerativeAI('API KEY')
 
   ipcMain.handle('chat-with-gemini', async (event, prompt) => {
     try {
