@@ -7,12 +7,15 @@ const bcrypt = require('bcryptjs');
 const sequelize = require('./models');
 const Person = require('./models/person');
 const User = require('./models/user');
+const FallbackStore = require('./fallback-store');
 const express = require('express');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const os = require('os'); // os modülünü ekledik
 
 let mainWindow;
 let editPersonWindow;
+let fallbackActive = false;
+let fallbackStore = null;
 
 // Express uygulaması oluştur
 const expressApp = express();
@@ -75,6 +78,7 @@ app.whenReady().then(async () => {
     console.log('Modeller senkronize edildi.');
   } catch (error) {
     console.error('Veritabanı bağlantısı başarısız:', error);
+    await activateFallback(error);
   }
 
   createWindow();
@@ -82,18 +86,36 @@ app.whenReady().then(async () => {
   // Kullanıcı kaydı işlemi
   ipcMain.handle('register-user', async (event, userData) => {
     try {
-      const existingUser = await User.findOne({ where: { username: userData.username } });
-      if (existingUser) {
-        throw new Error('Bu kullanıcı adı zaten alınmış.');
-      }
-      const saltRounds = 10;
-      const passwordHash = await bcrypt.hash(userData.password, saltRounds);
-      await User.create({
-        username: userData.username,
-        passwordHash,
-        faceDescriptor: userData.faceDescriptor,
-      });
-      return { success: true };
+      return await withFallback(
+        async () => {
+          const existingUser = await User.findOne({ where: { username: userData.username } });
+          if (existingUser) {
+            throw new Error('Bu kullanıcı adı zaten alınmış.');
+          }
+          const saltRounds = 10;
+          const passwordHash = await bcrypt.hash(userData.password, saltRounds);
+          await User.create({
+            username: userData.username,
+            passwordHash,
+            faceDescriptor: userData.faceDescriptor,
+          });
+          return { success: true };
+        },
+        async () => {
+          const existingUser = await fallbackStore.findUserByUsername(userData.username);
+          if (existingUser) {
+            throw new Error('Bu kullanıcı adı zaten alınmış.');
+          }
+          const saltRounds = 10;
+          const passwordHash = await bcrypt.hash(userData.password, saltRounds);
+          await fallbackStore.createUser({
+            username: userData.username,
+            passwordHash,
+            faceDescriptor: userData.faceDescriptor,
+          });
+          return { success: true };
+        }
+      );
     } catch (error) {
       console.error('Kullanıcı kaydı hatası:', error);
       return { success: false, message: error.message };
@@ -104,7 +126,10 @@ app.whenReady().then(async () => {
   ipcMain.handle('login', async (event, loginData) => {
     try {
       console.log('Gelen loginData:', loginData);
-      const user = await User.findOne({ where: { username: loginData.username } });
+      const user = await withFallback(
+        async () => User.findOne({ where: { username: loginData.username } }),
+        async () => fallbackStore.findUserByUsername(loginData.username)
+      );
       console.log('Bulunan kullanıcı:', user);
       if (!user) {
         return { success: false, message: 'Kullanıcı bulunamadı.' };
@@ -125,9 +150,12 @@ app.whenReady().then(async () => {
   // Kullanıcıyı kullanıcı adına göre getirme (Yüz tanıma için)
   ipcMain.handle('get-user-by-username', async (event, username) => {
     try {
-      const user = await User.findOne({ where: { username } });
+      const user = await withFallback(
+        async () => User.findOne({ where: { username } }),
+        async () => fallbackStore.findUserByUsername(username)
+      );
       if (user) {
-        return user.toJSON();
+        return user.toJSON ? user.toJSON() : user;
       } else {
         return null;
       }
@@ -140,8 +168,11 @@ app.whenReady().then(async () => {
   // Kişi ekleme işlemi
   ipcMain.handle('add-person', async (event, personData) => {
     try {
-      const person = await Person.create(personData);
-      return person.toJSON();
+      const person = await withFallback(
+        async () => Person.create(personData),
+        async () => fallbackStore.createPerson(personData)
+      );
+      return person.toJSON ? person.toJSON() : person;
     } catch (error) {
       console.error('Kişi ekleme hatası:', error);
       throw error;
@@ -151,8 +182,11 @@ app.whenReady().then(async () => {
   // Kişileri getirme işlemi
   ipcMain.handle('get-persons', async () => {
     try {
-      const persons = await Person.findAll();
-      return persons.map((person) => person.toJSON());
+      const persons = await withFallback(
+        async () => Person.findAll(),
+        async () => fallbackStore.listPersons()
+      );
+      return persons.map((person) => (person.toJSON ? person.toJSON() : person));
     } catch (error) {
       console.error('Kişileri getirme hatası:', error);
       throw error;
@@ -162,7 +196,10 @@ app.whenReady().then(async () => {
   // Kişi güncelleme işlemi
   ipcMain.handle('update-person', async (event, personId, updateData) => {
     try {
-      await Person.update(updateData, { where: { id: personId } });
+      await withFallback(
+        async () => Person.update(updateData, { where: { id: personId } }),
+        async () => fallbackStore.updatePerson(personId, updateData)
+      );
       return true;
     } catch (error) {
       console.error('Kişi güncelleme hatası:', error);
@@ -173,7 +210,10 @@ app.whenReady().then(async () => {
   // Kişi silme işlemi
   ipcMain.handle('delete-person', async (event, personId) => {
     try {
-      await Person.destroy({ where: { id: personId } });
+      await withFallback(
+        async () => Person.destroy({ where: { id: personId } }),
+        async () => fallbackStore.deletePerson(personId)
+      );
       return true;
     } catch (error) {
       console.error('Kişi silme hatası:', error);
@@ -195,9 +235,10 @@ app.whenReady().then(async () => {
   // Güncellenen kişi verilerini alma işlemi
   ipcMain.on('person-updated', (event, updatedPerson) => {
     // Veritabanını güncelle
-    Person.update(
-      { name: updatedPerson.name, email: updatedPerson.email },
-      { where: { id: updatedPerson.id } }
+    const updatePayload = { name: updatedPerson.name, email: updatedPerson.email };
+    withFallback(
+      async () => Person.update(updatePayload, { where: { id: updatedPerson.id } }),
+      async () => fallbackStore.updatePerson(updatedPerson.id, updatePayload)
     )
       .then(() => {
         // Ana pencereye güncelleme bildirimi gönder
@@ -297,3 +338,46 @@ app.on('window-all-closed', function () {
   server.close();
   if (process.platform !== 'darwin') app.quit();
 });
+
+function isConnectionError(error) {
+  if (!error) {
+    return false;
+  }
+  const name = error.name || '';
+  const code = error.parent && error.parent.code ? error.parent.code : '';
+  const message = error.message || '';
+  if (code && ['ECONNREFUSED', 'ENOTFOUND', 'EHOSTUNREACH', 'ECONNRESET'].includes(code)) {
+    return true;
+  }
+  if (name.includes('Connection') || name.includes('HostNotFound')) {
+    return true;
+  }
+  return /connection/i.test(message) && /refused|failed|not.*connect|terminat|timeout/i.test(message);
+}
+
+async function activateFallback(reason) {
+  if (fallbackActive) {
+    return;
+  }
+  fallbackActive = true;
+  const fallbackPath = path.join(app.getPath('userData'), 'fallback-db.json');
+  fallbackStore = new FallbackStore(fallbackPath);
+  await fallbackStore.load();
+  console.warn('Fallback storage active. Reason:', reason && reason.message ? reason.message : reason);
+}
+
+async function withFallback(dbFn, fallbackFn) {
+  if (fallbackActive) {
+    return fallbackFn();
+  }
+  try {
+    return await dbFn();
+  } catch (error) {
+    if (isConnectionError(error)) {
+      console.error('Veritabanı hatası, fallback aktif ediliyor:', error);
+      await activateFallback(error);
+      return fallbackFn();
+    }
+    throw error;
+  }
+}

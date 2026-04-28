@@ -2,6 +2,27 @@
 
 let faceDescriptor = null;
 
+function bindMirrorToggle() {
+  const video = document.getElementById('video');
+  const mirrorToggle = document.getElementById('mirror-toggle');
+  if (!video || !mirrorToggle) {
+    return;
+  }
+
+  const updateLabel = () => {
+    mirrorToggle.textContent = video.classList.contains('video-mirror')
+      ? 'Ayna: Açık'
+      : 'Ayna: Kapalı';
+  };
+
+  mirrorToggle.addEventListener('click', () => {
+    video.classList.toggle('video-mirror');
+    updateLabel();
+  });
+
+  updateLabel();
+}
+
 async function setupCamera(selectedDeviceId) {
   const video = document.getElementById('video');
   if (window.stream) {
@@ -112,6 +133,7 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
 
 // Sayfa yüklendiğinde modelleri ve kamera cihazlarını başlat
 window.addEventListener('DOMContentLoaded', async () => {
+  bindMirrorToggle();
   await loadModels();
   await getCameraDevices();
 });

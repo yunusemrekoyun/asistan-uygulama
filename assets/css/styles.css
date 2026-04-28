@@ -1,9 +1,106 @@
 /* styles.css */
 
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Spline+Sans:wght@400;500;600&display=swap');
+
+:root {
+  --bg-1: #0f1115;
+  --bg-2: #151a22;
+  --card: rgba(24, 30, 40, 0.85);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --text: #e9edf5;
+  --muted: #b6bfcd;
+  --accent: #ffb14a;
+  --accent-2: #4ad1ff;
+  --danger: #ff6b6b;
+  --shadow: 0 18px 60px rgba(8, 12, 18, 0.5);
+}
+
 /* Arka plan ve metin rengi */
 body {
-  background-color: #1a1a1a;
-  color: rgba(255, 255, 255, 0.87);
+  font-family: 'Spline Sans', sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(900px 500px at 10% -10%, rgba(74, 209, 255, 0.18), transparent 60%),
+    radial-gradient(700px 400px at 90% 0%, rgba(255, 177, 74, 0.2), transparent 65%),
+    linear-gradient(180deg, var(--bg-1), var(--bg-2));
+  min-height: 100vh;
+}
+
+.page-compact {
+  overflow-y: auto;
+}
+
+.page-compact .container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+.page-compact .mt-5 {
+  margin-top: 0 !important;
+}
+
+.page-compact .login-container,
+.page-compact .register-container,
+.page-compact .home-container {
+  width: 100%;
+  max-width: 760px;
+}
+
+.home-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.home-actions .btn {
+  margin-top: 0;
+}
+
+@media (max-width: 640px) {
+  .home-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-height: 720px) {
+  .page-compact .container {
+    align-items: flex-start;
+  }
+}
+
+.page-auth .form-group {
+  margin-bottom: 14px;
+}
+
+.page-auth .btn {
+  margin-top: 6px;
+}
+
+.page-auth hr {
+  margin: 12px 0;
+}
+
+.page-auth h1,
+.page-auth h2 {
+  margin-bottom: 16px;
+}
+
+.page-auth video {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+}
+
+h1,
+h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: 0.4px;
+  margin-bottom: 22px;
 }
 
 /* Konteyner stilleri */
@@ -14,50 +111,86 @@ body {
 .edit-person-container,
 .chat-container,
 .file-search-container {
-  max-width: 800px;
+  max-width: 880px;
   margin: 0 auto;
-  padding: 30px;
-  background-color: #2a2a2a;
-  border-radius: 8px;
-  color: #ffffff;
-}
-
-h1,
-h2 {
-  margin-bottom: 30px;
+  padding: 36px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  color: var(--text);
+  backdrop-filter: blur(8px);
 }
 
 .error-message {
   text-align: center;
+  color: var(--danger);
 }
 
 /* Form ve buton stilleri */
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .btn {
-  margin-top: 10px;
+  margin-top: 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
 }
 
+.btn-primary {
+  background: linear-gradient(135deg, #ffb14a, #ff7b4a);
+  border: none;
+  color: #1a1208;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.05);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #4ad1ff, #4aa7ff);
+  border: none;
+  color: #08121b;
+}
+
+.btn-success:hover {
+  filter: brightness(1.05);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.form-control,
+textarea,
 .input-group .form-control {
-  background-color: #2a2a2a;
-  color: #ffffff;
-  border: 1px solid #444;
+  background-color: rgba(18, 23, 32, 0.9);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
 }
 
-.input-group .form-control::placeholder {
-  color: #888;
+.form-control::placeholder,
+textarea::placeholder {
+  color: rgba(182, 191, 205, 0.6);
 }
 
 .input-group .btn {
-  background-color: #444;
-  color: #ffffff;
-  border: none;
+  background-color: rgba(255, 255, 255, 0.12);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .input-group .btn:hover {
-  background-color: #555;
+  background-color: rgba(255, 255, 255, 0.18);
 }
 
 .text-center {
@@ -68,18 +201,19 @@ h2 {
 .message {
   margin-bottom: 1rem;
   padding: 1rem;
-  border-radius: 8px;
-  max-width: 80%;
-  color: #ffffff;
+  border-radius: 12px;
+  max-width: 85%;
+  color: var(--text);
+  box-shadow: 0 10px 30px rgba(10, 14, 20, 0.35);
 }
 
 .user-message {
-  background-color: #3b3b3b;
+  background: rgba(255, 177, 74, 0.15);
   margin-left: auto;
 }
 
 .ai-message {
-  background-color: #4a4a4a;
+  background: rgba(74, 209, 255, 0.14);
   margin-right: auto;
 }
 
@@ -87,8 +221,9 @@ h2 {
   height: 400px;
   overflow-y: auto;
   padding: 1rem;
-  background-color: #2a2a2a;
-  border-radius: 8px;
+  background: rgba(12, 16, 22, 0.65);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   margin-bottom: 1rem;
 }
 
@@ -100,33 +235,29 @@ h2 {
 
 textarea {
   flex-grow: 1;
-  padding: 0.5rem;
-  border-radius: 4px;
-  background-color: #2a2a2a;
-  color: #ffffff;
-  border: 1px solid #444;
+  padding: 0.6rem;
   resize: none;
 }
 
 .toggle-button {
-  background-color: #444;
+  background-color: rgba(255, 255, 255, 0.1);
   color: #fff;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   padding: 0.5rem 1rem;
-  border-radius: 4px;
+  border-radius: 10px;
   cursor: pointer;
 }
 
 .toggle-button:hover {
-  background-color: #555;
+  background-color: rgba(255, 255, 255, 0.18);
 }
 
 .full-response {
   display: none;
   margin-top: 0.5rem;
   padding: 1rem;
-  background-color: #2d2d2d;
-  border-radius: 4px;
+  background-color: rgba(21, 26, 34, 0.85);
+  border-radius: 10px;
 }
 
 .full-response.show {
@@ -135,12 +266,13 @@ textarea {
 
 /* Kod blokları için stil */
 .code-block {
-  background-color: #2d2d2d;
+  background-color: rgba(18, 23, 32, 0.95);
   padding: 1rem;
-  border-radius: 4px;
+  border-radius: 10px;
   overflow-x: auto;
-  color: #ffffff;
-  font-family: monospace;
+  color: var(--text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
   margin-bottom: 1rem;
 }
 
@@ -153,8 +285,10 @@ textarea {
 /* Tablo stilleri */
 .table {
   margin-top: 20px;
-  background-color: #2a2a2a;
-  color: #ffffff;
+  background-color: rgba(16, 20, 28, 0.85);
+  color: var(--text);
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .table th,
@@ -163,23 +297,23 @@ textarea {
 }
 
 .table thead th {
-  background-color: #444;
-  color: #ffffff;
-  border-bottom: 2px solid #555;
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .table tbody tr:hover {
-  background-color: #333;
+  background-color: rgba(255, 255, 255, 0.06);
 }
 
 /* Dosya arama sayfası için stil */
 .folder-icon {
-  color: #FFD700;
+  color: #ffd700;
   margin-right: 10px;
 }
 
 .file-icon {
-  color: #4682B4;
+  color: #4aa7ff;
   margin-right: 10px;
 }
 
@@ -189,7 +323,7 @@ textarea {
 }
 
 .file-item:hover {
-  background-color: #3a3a3a;
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 #recentPlaces {
@@ -214,13 +348,13 @@ textarea {
 
 /* Liste öğeleri */
 .list-group-item {
-  background-color: #2a2a2a;
-  color: #ffffff;
-  border: 1px solid #444;
+  background-color: rgba(18, 23, 32, 0.85);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .list-group-item:hover {
-  background-color: #3a3a3a;
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 /* Margin-top yardımcı sınıflar */
@@ -234,4 +368,23 @@ textarea {
 
 .mt-5 {
   margin-top: 3rem !important;
+}
+
+video {
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 14px 30px rgba(8, 12, 18, 0.45);
+}
+
+a {
+  color: var(--accent-2);
+}
+
+a:hover {
+  color: #7be2ff;
+  text-decoration: none;
+}
+
+.video-mirror {
+  transform: scaleX(-1);
 }

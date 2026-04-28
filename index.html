@@ -12,7 +12,7 @@
   <!-- Özel CSS dosyanız -->
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
-<body>
+<body class="page-compact page-auth">
   <div class="container">
     <div class="login-container mt-5">
       <h1 class="text-center">Asistan Uygulama</h1>
@@ -56,6 +56,9 @@
         <div class="text-center">
           <video id="video" width="320" height="240" autoplay muted></video>
         </div>
+        <button id="mirror-toggle" class="btn btn-secondary btn-block mt-2">
+          Ayna: Kapalı
+        </button>
         <label for="video-source">Kamera Seç:</label>
         <select id="video-source" class="form-control"></select>
         <button id="face-login-button" class="btn btn-success btn-block mt-3">
